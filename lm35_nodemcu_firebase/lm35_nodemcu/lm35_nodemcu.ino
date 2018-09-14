@@ -2,6 +2,7 @@
 ////////////////////////////////////////////////////////////
 
 #define lm35Pin A0
+#define ledPin 14
 
 #include <ESP8266WiFi.h>
 #include <FirebaseArduino.h>
@@ -15,6 +16,7 @@
 void setup()
 {
   Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
 
   /* initialization for firebase */
   // connect to wifi.
@@ -35,7 +37,7 @@ void setup()
 void loop()
 {
   float lm35Val = getLm35Val();
-  
+  delay(500);
 
   Firebase.setFloat("sensor1/temperature", lm35Val);
   // handle error
@@ -43,9 +45,23 @@ void loop()
       Serial.print("setting /number failed:");
       Serial.println(Firebase.error());  
       return;
-
+     
       delay(2000);
   }
+  int minimumVal = Firebase.getInt("minimum temperature/value");
+  int maximumVal = Firebase.getInt("maximum temperature/value");
+
+  if((minimumVal <= lm35Val)&&(lm35Val <= maximumVal))
+  {
+    digitalWrite(ledPin, HIGH);
+    
+  }
+  else
+  {
+    digitalWrite(ledPin, LOW);
+  }
+  delay(1500);
+  
 }
 
 
