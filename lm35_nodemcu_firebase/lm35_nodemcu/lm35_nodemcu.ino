@@ -37,7 +37,7 @@ void loop()
   float lm35Val = getLm35Val();
   
 
-  Firebase.setFloat("temperature", lm35Val);
+  Firebase.setFloat("sensor1/temperature", lm35Val);
   // handle error
   if (Firebase.failed()) {
       Serial.print("setting /number failed:");
@@ -50,11 +50,11 @@ void loop()
 
 
 //function to get temperature value fom lm35
-float getLm35Val()
+int getLm35Val()
 {
   int analogValue = analogRead(lm35Pin);
   float milliVolts = (analogValue/1024.0) * 3300; //3300 is the voltage provided by nodemcu
-  float celsius = milliVolts/10;
+  int celsius = milliVolts/10;
   return celsius;
 }
 
